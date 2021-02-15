@@ -1,4 +1,4 @@
-import google.oauth2.credentials
+# import google.oauth2.credentials
 import google_auth_oauthlib.flow
 
 SCOPES = ['https://www.googleapis.com/auth/presentations.readonly']
