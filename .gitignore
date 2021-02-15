@@ -1,4 +1,7 @@
 .vscode
+*.sqlite3
+*.sqlite
+db.*
 
 ### Python template
 # Byte-compiled / optimized / DLL files

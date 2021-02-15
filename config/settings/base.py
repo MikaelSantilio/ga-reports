@@ -41,9 +41,14 @@ LOCALE_PATHS = [str(ROOT_DIR / "locale")]
 # ------------------------------------------------------------------------------
 # https://docs.djangoproject.com/en/dev/ref/settings/#databases
 
+# DATABASES = {
+#     "default": env.db("DATABASE_URL", default="postgres:///ga_reports")
+# }
 DATABASES = {
-    "default": env.db("DATABASE_URL", default="postgres:///ga_reports")
-}
+    "default": {
+    'ENGINE': 'django.db.backends.sqlite3',
+    'NAME': str(ROOT_DIR / 'db.sqlite3'),
+}}
 DATABASES["default"]["ATOMIC_REQUESTS"] = True
 
 # URLS
@@ -78,7 +83,7 @@ THIRD_PARTY_APPS = [
 
 LOCAL_APPS = [
     "ga_reports.users.apps.UsersConfig",
-    # Your stuff: custom apps go here
+    "ga_reports.core.apps.CoreConfig",
 ]
 # https://docs.djangoproject.com/en/dev/ref/settings/#installed-apps
 INSTALLED_APPS = DJANGO_APPS + THIRD_PARTY_APPS + LOCAL_APPS
