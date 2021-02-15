@@ -2,6 +2,7 @@
 *.sqlite3
 *.sqlite
 db.*
+.envrc
 
 ### Python template
 # Byte-compiled / optimized / DLL files

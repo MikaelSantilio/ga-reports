@@ -289,5 +289,22 @@ REST_FRAMEWORK = {
 
 # django-cors-headers - https://github.com/adamchainz/django-cors-headers#setup
 CORS_URLS_REGEX = r"^/api/.*$"
-# Your stuff...
+
+# GOOGLE
 # ------------------------------------------------------------------------------
+GOOGLE_SCOPES = {
+    "PRESENTATIONS": {
+        "readonly": ['https://www.googleapis.com/auth/presentations.readonly']
+    }
+}
+
+GOOGLE_CLIENT_CONFIG = {
+    "web": {"client_id": env.str("GOOGLE_CLIENT_ID"),
+            "project_id": env.str("GOOGLE_PROJECT_ID"),
+            "auth_uri": env.str("GOOGLE_AUTH_URI"),
+            "token_uri": env.str("GOOGLE_TOKEN_URI"),
+            "auth_provider_x509_cert_url": env.str("GOOGLE_AUTH_PROVIDER"),
+            "client_secret": env.str("GOOGLE_CLIENT_SECRET"),
+            "javascript_origins": [""]
+            }
+}
