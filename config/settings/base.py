@@ -294,7 +294,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 # ------------------------------------------------------------------------------
 GOOGLE_SCOPES = {
     "PRESENTATIONS": {
-        "readonly": ['https://www.googleapis.com/auth/presentations.readonly']
+        "readonly": 'https://www.googleapis.com/auth/presentations.readonly',
+        "manager": 'https://www.googleapis.com/auth/presentations',
     }
 }
 

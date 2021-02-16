@@ -37,7 +37,7 @@ class GoogleAuthorizationView(TemplateResponseMixin, ContextMixin, View):
 
     def get(self, request, *args, **kwargs):
         flow = self.flow_class.from_client_config(
-            client_config=settings.GOOGLE_CLIENT_CONFIG, scopes=settings.GOOGLE_SCOPES["PRESENTATIONS"]["readonly"])
+            client_config=settings.GOOGLE_CLIENT_CONFIG, scopes=[settings.GOOGLE_SCOPES["PRESENTATIONS"]["manager"]])
         flow.redirect_uri = request.build_absolute_uri(str(self.flow_redirect_uri))
         authorization_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true')
 
@@ -66,7 +66,7 @@ class GoogleOAuth2CallbackView(TemplateResponseMixin, ContextMixin, View):
 
         flow = self.flow_class.from_client_config(
             client_config=settings.GOOGLE_CLIENT_CONFIG,
-            scopes=settings.GOOGLE_SCOPES["PRESENTATIONS"]["readonly"],
+            scopes=[settings.GOOGLE_SCOPES["PRESENTATIONS"]["manager"]],
             state=state)
         flow.redirect_uri = request.build_absolute_uri(str(self.flow_redirect_uri))
 
@@ -101,8 +101,10 @@ class TestAPIGoogleView(TemplateResponseMixin, ContextMixin, View):
 
         # Call the Slides API
         PRESENTATION_ID = "1sAih7s8HNbfjHyZuBaUxKPtcpBFZ0-FvmL6CdT_XQh4"
+        pdb.set_trace()
         presentation = service.presentations().get(
             presentationId=PRESENTATION_ID).execute()
+        
         slides = presentation.get('slides')
 
         print('The presentation contains {} slides:'.format(len(slides)))
