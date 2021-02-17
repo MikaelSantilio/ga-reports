@@ -22,6 +22,8 @@ from googleapiclient.discovery import build
 from google.oauth2.credentials import Credentials
 import pdb
 
+SCOPES = [settings.GOOGLE_SCOPES["PRESENTATIONS"]["manager"], settings.GOOGLE_SCOPES["PRESENTATIONS"]["readonly"]]
+
 
 class GoogleAuthorizationView(TemplateResponseMixin, ContextMixin, View):
 
@@ -37,7 +39,7 @@ class GoogleAuthorizationView(TemplateResponseMixin, ContextMixin, View):
 
     def get(self, request, *args, **kwargs):
         flow = self.flow_class.from_client_config(
-            client_config=settings.GOOGLE_CLIENT_CONFIG, scopes=[settings.GOOGLE_SCOPES["PRESENTATIONS"]["manager"]])
+            client_config=settings.GOOGLE_CLIENT_CONFIG, scopes=SCOPES)
         flow.redirect_uri = request.build_absolute_uri(str(self.flow_redirect_uri))
         authorization_url, state = flow.authorization_url(access_type='offline', include_granted_scopes='true')
 
@@ -66,7 +68,7 @@ class GoogleOAuth2CallbackView(TemplateResponseMixin, ContextMixin, View):
 
         flow = self.flow_class.from_client_config(
             client_config=settings.GOOGLE_CLIENT_CONFIG,
-            scopes=[settings.GOOGLE_SCOPES["PRESENTATIONS"]["manager"]],
+            scopes=SCOPES,
             state=state)
         flow.redirect_uri = request.build_absolute_uri(str(self.flow_redirect_uri))
 
@@ -100,18 +102,59 @@ class TestAPIGoogleView(TemplateResponseMixin, ContextMixin, View):
         service = build('slides', 'v1', credentials=creds)
 
         # Call the Slides API
-        PRESENTATION_ID = "1sAih7s8HNbfjHyZuBaUxKPtcpBFZ0-FvmL6CdT_XQh4"
-        pdb.set_trace()
-        presentation = service.presentations().get(
-            presentationId=PRESENTATION_ID).execute()
-        
-        slides = presentation.get('slides')
+        PRESENTATION_ID = "1RQewldtZvvnzbg80gJWH9wbnLRnI0JWGPoJDYcRX1o8"
+        # pdb.set_trace()
 
-        print('The presentation contains {} slides:'.format(len(slides)))
-        for i, slide in enumerate(slides):
-            print(f"- Slide #{i + 1} contains {len(slide.get('pageElements'))} elements.")
+        # presentation = service.presentations().get(
+        #     presentationId=PRESENTATION_ID).execute()
+
+        body = {
+            'requests': self.change_text()[1]
+        }
+
+        response = service.presentations() \
+            .batchUpdate(presentationId=PRESENTATION_ID, body=body).execute()
+
+        # slides = presentation.get('slides')
+
+        # print('The presentation contains {} slides:'.format(len(slides)))
+        # for i, slide in enumerate(slides):
+        #     print(f"- Slide #{i + 1} contains {len(slide.get('pageElements'))} elements.")
+        #     for key, value in slide.get('pageElements'):
+        #         print(value.get())
 
         return self.render_to_response(self.get_context_data())
+
+    def change_text(self):
+        element_id = 'i0'
+
+        requests_1 = [
+
+            # Insert text into the box, using the supplied element ID.
+            {
+                'deleteText': {
+                    'objectId': element_id,
+                    # 'textRange': {
+                    #     "startIndex": 0,
+                    #     "endIndex": 3
+                    #     "type": enum (Type)
+                    # }
+                    # 'textRange': 0
+                }
+            }
+        ]
+        requests_2 = [
+            # Insert text into the box, using the supplied element ID.
+            {
+                'insertText': {
+                    'objectId': element_id,
+                    'insertionIndex': 0,
+                    'text': 'New Box Text Inserted!'
+                }
+            }
+        ]
+
+        return [requests_1, requests_2]
 
 
 test_google_api = TestAPIGoogleView.as_view()
